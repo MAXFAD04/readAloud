@@ -2,6 +2,7 @@ import 'package:flutter/material.dart';
 import 'book.dart';
 import 'edit_book_page.dart';
 import 'edit_account_page.dart';
+import 'book_page.dart'; // Импортируем страницу книги
 
 class HomePage extends StatefulWidget {
   const HomePage({super.key});
@@ -20,39 +21,11 @@ class _HomePageState extends State<HomePage> {
   String searchQuery = '';
 
   void _showBookDetails(BuildContext context, Book book) {
-    showModalBottomSheet(
-      context: context,
-      builder: (context) {
-        return Container(
-          padding: EdgeInsets.all(16.0),
-          height: 300,
-          child: Column(
-            children: [
-              Image.asset(book.cover),
-              Text(book.title, style: TextStyle(fontSize: 20)),
-              Text(book.author, style: TextStyle(fontSize: 16)),
-              Row(
-                mainAxisAlignment: MainAxisAlignment.spaceAround,
-                children: [
-                  ElevatedButton(onPressed: () {}, child: Text('ПОДЕЛИТЬСЯ')),
-                  ElevatedButton(
-                    onPressed: () {
-                      Navigator.push(
-                        context,
-                        MaterialPageRoute(
-                          builder: (context) => EditBookPage(book: book),
-                        ),
-                      );
-                    },
-                    child: Text('РЕДАКТИРОВАТЬ'),
-                  ),
-                  ElevatedButton(onPressed: () {}, child: Text('УДАЛИТЬ')),
-                ],
-              ),
-            ],
-          ),
-        );
-      },
+    Navigator.push(
+      context,
+      MaterialPageRoute(
+        builder: (context) => BookPage(book: book), // Переход на страницу книги
+      ),
     );
   }
 
@@ -77,145 +50,315 @@ class _HomePageState extends State<HomePage> {
   }
 
   void _showUserMenu(BuildContext context) {
-    showModalBottomSheet(
+    showDialog(
       context: context,
       builder: (context) {
-        return Container(
-          padding: EdgeInsets.all(16.0),
-          child: Column(
-            mainAxisSize: MainAxisSize.min,
-            children: [
-              Text('Пользователь', style: TextStyle(fontSize: 24)),
-              ListTile(title: Text('Ник пользователя')),
-              ListTile(title: Text('Почта')),
-              ListTile(
-                title: Text('Редактировать аккаунт'),
-                onTap: () {
-                  Navigator.push(
-                    context,
-                    MaterialPageRoute(builder: (context) => EditAccountPage()),
-                  );
-                },
+        return Align(
+          alignment: Alignment.topRight, // Выравнивание по правому верхнему углу
+          child: Container(
+            width: 300, // Ширина всплывающего окна
+            padding: EdgeInsets.all(16.0),
+            child: Dialog(
+              shape: RoundedRectangleBorder(
+                borderRadius: BorderRadius.circular(16.0), // Закругление углов
               ),
-              ListTile(title: Text('Настройки')),
-              ListTile(title: Text('Справка/Отзывы')),
-            ],
+              backgroundColor: Color(0xFF3EB489), // Зелёный фон
+              elevation: 8,
+              child: Column(
+                mainAxisSize: MainAxisSize.min,
+                children: [
+                  // Кнопка закрытия
+                  Align(
+                    alignment: Alignment.topLeft,
+                    child: IconButton(
+                      icon: Icon(Icons.close, color: Colors.white),
+                      onPressed: () {
+                        Navigator.of(context).pop(); // Закрытие окна
+                      },
+                    ),
+                  ),
+                  // Профиль
+                  CircleAvatar(
+                    radius: 40,
+                    backgroundImage: AssetImage('assets/profile_picture.png'), // Замените на путь к изображению профиля
+                  ),
+                  SizedBox(height: 8),
+                  Text(
+                    'Кот_на_Арбузе',
+                    style: TextStyle(fontSize: 20, fontStyle: FontStyle.italic, color: Colors.white),
+                  ),
+                  SizedBox(height: 4),
+                  Text(
+                    'cat_on_watermelon_78@gmail.com',
+                    style: TextStyle(fontSize: 16, color: Colors.white),
+                  ),
+                  SizedBox(height: 16),
+                  // Кнопка редактирования
+                  ElevatedButton(
+                    onPressed: () {
+                      Navigator.push(
+                        context,
+                        MaterialPageRoute(builder: (context) => EditAccountPage()),
+                      );
+                    },
+                    child: Text('Редактировать аккаунт'),
+                    style: ElevatedButton.styleFrom(
+                      backgroundColor: Colors.white, // Цвет кнопки
+                      foregroundColor: Color(0xFF3EB489), // Цвет текста
+                    ),
+                  ),
+                  SizedBox(height: 16),
+                  // Список пунктов
+                  Column(
+                    crossAxisAlignment: CrossAxisAlignment.start,
+                    children: [
+                      TextButton(
+                        onPressed: () {
+                          // Логика для перехода в Настройки
+                        },
+                        child: Text('Настройки', style: TextStyle(color: Colors.white)),
+                      ),
+                      TextButton(
+                        onPressed: () {
+                          // Логика для перехода в Справка/Отзывы
+                        },
+                        child: Text('Справка/Отзывы', style: TextStyle(color: Colors.white)),
+                      ),
+                    ],
+                  ),
+                ],
+              ),
+            ),
           ),
         );
       },
     );
   }
 
+  void _showBookOptions(BuildContext context, Book book) {
+  showDialog(
+    context: context,
+    barrierDismissible: true, // Позволяет закрыть диалог, нажав вне его границ
+    builder: (context) {
+      return Align(
+        alignment: Alignment.bottomCenter, // Размещаем окно внизу
+        child: Container(
+          margin: EdgeInsets.symmetric(horizontal: 20, vertical: 20), // Отступы по бокам и снизу
+          decoration: BoxDecoration(
+            color: Colors.white, // Белый фон для окна
+            borderRadius: BorderRadius.circular(16),
+            boxShadow: [
+              BoxShadow(
+                color: Colors.black.withOpacity(0.2),
+                spreadRadius: 5,
+                blurRadius: 10,
+                offset: Offset(0, 3), // Смещение тени
+              ),
+            ],
+          ),
+          child: Column(
+            mainAxisSize: MainAxisSize.min,
+            children: [
+              // Полоска для закрытия окна
+              GestureDetector(
+                onVerticalDragDown: (details) {
+                  Navigator.of(context).pop(); // Закрытие окна при потягивании вниз
+                },
+                child: Container(
+                  height: 5,
+                  width: 40,
+                  color: Colors.grey[300],
+                  margin: EdgeInsets.symmetric(vertical: 10),
+                ),
+              ),
+              // Обложка книги
+              Image.asset(
+                book.cover,
+                height: 150,
+                fit: BoxFit.cover,
+              ),
+              SizedBox(height: 10),
+              // Название и автор
+              Text(
+                book.title,
+                style: TextStyle(fontSize: 20, fontWeight: FontWeight.bold),
+                textAlign: TextAlign.center,
+              ),
+              Text(
+                book.author, // Предполагается, что у вас есть поле author в классе Book
+                style: TextStyle(fontSize: 16, color: Colors.grey),
+                textAlign: TextAlign.center,
+              ),
+              SizedBox(height: 20),
+              // Кнопки действий
+              Row(
+                mainAxisAlignment: MainAxisAlignment.spaceEvenly,
+                children: [
+                  Column(
+                    children: [
+                      // Кнопка "Поделиться"
+                      IconButton(
+                        icon: Icon(Icons.share),
+                        onPressed: () {
+                          // Логика для поделиться книгой
+                          Navigator.of(context).pop();
+                        },
+                      ),
+                      Text("Поделиться"), // Подпись под кнопкой
+                    ],
+                  ),
+                  Column(
+                    children: [
+                      // Кнопка "Редактировать"
+                      IconButton(
+                        icon: Icon(Icons.edit),
+                        onPressed: () {
+                          Navigator.of(context).pop();
+                          Navigator.push(
+                            context,
+                            MaterialPageRoute(builder: (context) => EditBookPage(book: book)),
+                          );
+                        },
+                      ),
+                      Text("Редактировать"), // Подпись под кнопкой
+                    ],
+                  ),
+                  Column(
+                    children: [
+                      // Кнопка "Удалить из списка"
+                      IconButton(
+                        icon: Icon(Icons.delete),
+                        onPressed: () {
+                          // Логика для удаления книги
+                          Navigator.of(context).pop();
+                        },
+                      ),
+                      Text("Удалить"), // Подпись под кнопкой
+                    ],
+                  ),
+                ],
+              ),
+              SizedBox(height: 20),
+            ],
+          ),
+        ),
+      );
+    },
+  );
+}
+
   @override
   Widget build(BuildContext context) {
     return Scaffold(
       appBar: AppBar(
-        title: Text('Библиотека'),
-        actions: [
-          IconButton(
-            icon: Icon(Icons.filter_list),
-            onPressed: () => _showFilterMenu(context),
-          ),
-          IconButton(
-            icon: Icon(Icons.account_circle),
-            onPressed: () => _showUserMenu(context),
-          ),
-        ],
-      ),
-      body: Column(
-        children: [
-          Padding(
-            padding: const EdgeInsets.all(8.0),
-            child: Row(
-              children: [
-                Expanded(
-                  child: TextField(
-                    onChanged: (value) {
-                      setState(() {
-                        searchQuery = value.toLowerCase();
-                      });
-                    },
-                    decoration: InputDecoration(
-                      hintText: 'Поиск книг...',
-                      border: OutlineInputBorder(),
-                    ),
-                  ),
-                ),
-                IconButton(
-                  icon: Icon(isCompactView ? Icons.grid_view : Icons.list),
-                  onPressed: () {
+        backgroundColor: Color(0xFF00b358), // Ярко-зеленый фон
+        title: Row(
+          children: [
+            Expanded(
+              child: Container(
+                margin: EdgeInsets.only(right: 8.0),
+                child: TextField(
+                  onChanged: (value) {
                     setState(() {
-                      isCompactView = !isCompactView;
+                      searchQuery = value.toLowerCase();
                     });
                   },
-                ),
-              ],
-            ),
-          ),
-          Expanded(
-            child: isCompactView
-                ? ListView.builder(
-                    itemCount: books.where((book) => book.title.toLowerCase().contains(searchQuery)).length,
-                    itemBuilder: (context, index) {
-                      final filteredBooks = books.where((book) => book.title.toLowerCase().contains(searchQuery)).toList();
-                      return Card(
-                        child: ListTile(
-                          leading: Image.asset(filteredBooks[index].cover),
-                          title: Text(filteredBooks[index].title),
-                          subtitle: Text(filteredBooks[index].tag),
-                          trailing: IconButton(
-                            icon: Icon(Icons.more_vert),
-                            onPressed: () => _showBookDetails(context, filteredBooks[index]),
-                          ),
-                        ),
-                      );
-                    },
-                  )
-                : GridView.builder(
-                    gridDelegate: SliverGridDelegateWithFixedCrossAxisCount(
-                      crossAxisCount: 2,
+                  decoration: InputDecoration(
+                    hintText: 'Поиск книг...',
+                    prefixIcon: Icon(Icons.search),
+                    filled: true,
+                    fillColor: Colors.white,
+                    border: OutlineInputBorder(
+                      borderRadius: BorderRadius.circular(30.0),
+                      borderSide: BorderSide.none,
                     ),
-                    itemCount: books.where((book) => book.title.toLowerCase().contains(searchQuery)).length,
-                    itemBuilder: (context, index) {
-                      final filteredBooks = books.where((book) => book.title.toLowerCase().contains(searchQuery)).toList();
-                      return Card(
-                        child: GestureDetector(
-                          onTap: () => _showBookDetails(context, filteredBooks[index]),
-                          child: Column(
-                            crossAxisAlignment: CrossAxisAlignment.start,
-                            children: [
-                              Image.asset(
-                                filteredBooks[index].cover,
-                                fit: BoxFit.cover,
-                                height: 150,
-                              ),
-                              Padding(
-                                padding: const EdgeInsets.all(8.0),
-                                child: Text(
-                                  filteredBooks[index].title,
-                                  style: TextStyle(fontSize: 16, fontWeight: FontWeight.bold),
-                                ),
-                              ),
-                              Padding(
-                                padding: const EdgeInsets.symmetric(horizontal: 8.0),
-                                child: Text(filteredBooks[index].tag),
-                              ),
-                            ],
+                  ),
+                ),
+              ),
+            ),
+            IconButton(
+              icon: Icon(Icons.filter_list),
+              onPressed: () => _showFilterMenu(context),
+            ),
+            IconButton(
+              icon: Icon(Icons.view_module),
+              onPressed: () {
+                setState(() {
+                  isCompactView = !isCompactView; // Переключение между режимами отображения
+                });
+              },
+            ),
+            IconButton(
+              icon: Icon(Icons.person),
+              onPressed: () => _showUserMenu(context),
+            ),
+          ],
+        ),
+      ),
+      body: isCompactView
+          ? ListView.builder(
+              itemCount: books.where((book) => book.title.toLowerCase().contains(searchQuery)).length,
+              itemBuilder: (context, index) {
+                final filteredBooks = books.where((book) => book.title.toLowerCase().contains(searchQuery)).toList();
+                return Card(
+                  child: ListTile(
+                    leading: Image.asset(filteredBooks[index].cover),
+                    title: Text(filteredBooks[index].title),
+                    subtitle: Text(filteredBooks[index].tag),
+                    trailing: IconButton(
+                      icon: Icon(Icons.more_vert),
+                      onPressed: () => _showBookOptions(context, filteredBooks[index]), // Показать опции книги
+                    ),
+                    onTap: () => _showBookDetails(context, filteredBooks[index]), // Переход на страницу книги
+                  ),
+                );
+              },
+            )
+          : GridView.builder(
+              gridDelegate: SliverGridDelegateWithFixedCrossAxisCount(
+                crossAxisCount: 2,
+              ),
+              itemCount: books.where((book) => book.title.toLowerCase().contains(searchQuery)).length,
+              itemBuilder: (context, index) {
+                final filteredBooks = books.where((book) => book.title.toLowerCase().contains(searchQuery)).toList();
+                return Card(
+                  child: GestureDetector(
+                    onTap: () => _showBookDetails(context, filteredBooks[index]), // Переход на страницу книги
+                    child: Column(
+                      crossAxisAlignment: CrossAxisAlignment.start,
+                      children: [
+                        Image.asset(
+                          filteredBooks[index].cover,
+                          fit: BoxFit.cover,
+                          height: 150,
+                        ),
+                        Padding(
+                          padding: const EdgeInsets.all(8.0),
+                          child: Text(
+                            filteredBooks[index].title,
+                            style: TextStyle(fontSize: 16, fontWeight: FontWeight.bold),
                           ),
                         ),
-                      );
-                    },
+                        Padding(
+                          padding: const EdgeInsets.symmetric(horizontal: 8.0),
+                          child: Text(filteredBooks[index].tag),
+                        ),
+                        IconButton(
+                          icon: Icon(Icons.more_vert),
+                          onPressed: () => _showBookOptions(context, filteredBooks[index]), // Показать опции книги
+                        ),
+                      ],
+                    ),
                   ),
-          ),
-        ],
-      ),
+                );
+              },
+            ),
       floatingActionButton: FloatingActionButton(
         onPressed: () {
-          // ТУТ добавить логику для добавления новой книги
+          // Логика для добавления новой книги
         },
         child: Icon(Icons.add),
       ),
     );
   }
 }
-
