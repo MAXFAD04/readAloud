@@ -51,7 +51,7 @@ class EditAccountPage extends StatelessWidget {
                   ),
                   CircleAvatar(
                     radius: 40,
-                    backgroundImage: AssetImage('assets/profile_picture.png'), // Замените на путь к изображению профиля
+                    backgroundImage: AssetImage('assets/account.jpg'), // Замените на путь к изображению профиля
                   ),
                 ],
               ),

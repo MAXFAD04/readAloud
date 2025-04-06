@@ -14,8 +14,8 @@ class HomePage extends StatefulWidget {
 class _HomePageState extends State<HomePage> {
   bool isCompactView = true; // Переключение между режимами отображения
   List<Book> books = [
-    Book('Book Title 1', 'Author 1', 'Прочитана', 'assets/book1.jpg'),
-    Book('Book Title 2', 'Author 2', 'Читаю (50%)', 'assets/book2.jpg'),
+    Book('Book Title 1', 'Author 1', 'Прочитана', 'assets/1.jpg'),
+    Book('Book Title 2', 'Author 2', 'Читаю (50%)', 'assets/2.jpg'),
   ];
 
   String searchQuery = '';
@@ -80,7 +80,7 @@ class _HomePageState extends State<HomePage> {
                   // Профиль
                   CircleAvatar(
                     radius: 40,
-                    backgroundImage: AssetImage('assets/profile_picture.png'), // Замените на путь к изображению профиля
+                    backgroundImage: AssetImage('assets/account.jpg'), 
                   ),
                   SizedBox(height: 8),
                   Text(
